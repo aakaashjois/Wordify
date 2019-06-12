@@ -1,44 +1,69 @@
-import string
-import itertools
+import phonenumbers
+from phonenumbers import NumberParseException
+from nltk.corpus import words
 
 
-class Wordify:
-
-    def __init__(self, number: str) -> None:
-        self.has_country_code = False
-        self.combinations = ['', '', 'abc', 'def', 'ghi', 'jkl', 'mno',
-                             'pqrs', 'tuv', 'wxyz']
-        self.number = number
-        self.all_perms = list()
-
-    def preprocess_number(self) -> str:
-        number = self.number.translate(str.maketrans('', '',
-                                                     string.punctuation))
-        if number[0] == '1' and len(number) == 11:
-            self.has_country_code = True
-            number = number[1:]
-        if len(number) < 10 or len(number) > 11:
-            raise ValueError(
-                '{} is not a valid US phone number.'.format(number))
-        return number
-
-    def get_all_words(self):
-        num_list = self.parse_number()
-        comb = [self.combinations[num] for num in num_list]
-        temp = [comb[0]]
-        for i in range(1, len(comb)):
-            temp.append(comb[i])
-            self.all_perms = self.all_perms + list(map(lambda x: ''.join(x),
-                                                       itertools.product(
-                                                           *temp)))
-
-    def parse_number(self):
-        return list(map(int, self.number))
+def map_all_words_to_numbers():
+    words_list = words.words()
+    words_list = set(list(filter(lambda x: len(x) <= 10, words_list)))
+    nums = list(map(words_to_number, words_list))
+    word_num_map = dict()
+    for w, n in zip(words_list, nums):
+        w = w.upper()
+        if n in word_num_map.keys():
+            word_num_map[n].append(w)
+        else:
+            word_num_map[n] = [w]
+    return word_num_map
 
 
-if __name__ == '__main__':
-    ph_num = '18007246837'
-    wordify = Wordify(ph_num)
-    wordify.preprocess_number()
-    wordify.get_all_words()
-    print(wordify.all_perms)
+ALL_WORDS_NUM = map_all_words_to_numbers()
+
+
+def perform_validation(num):
+    try:
+        parsed = phonenumbers.parse(num, 'US')
+        return phonenumbers.is_valid_number(parsed)
+    except ModuleNotFoundError:
+        return False
+    except NumberParseException:
+        return False
+
+
+def validate_number(num):
+    if num[0] == '+' and len(num[1:]) == 11:
+        return perform_validation(num)
+    elif len(num) == 11:
+        return perform_validation('+' + num)
+    elif len(num) == 10:
+        return perform_validation(num)
+    else:
+        return False
+
+
+def parse_number(num):
+    chunks = []
+    i = 0
+    total = len(num)
+    temp = ''
+    while i < total:
+        if num[i] == '0' or num[i] == '1':
+            chunks += [temp] if temp != '' else []
+            chunks += [num[i]]
+            temp = ''
+        else:
+            temp += num[i]
+        i += 1
+    chunks += [temp] if temp != '' else []
+    return chunks
+
+
+def words_to_number(num):
+    return phonenumbers.convert_alpha_characters_in_number(num)
+
+
+def number_to_words(num):
+    if num in ALL_WORDS_NUM.keys():
+        return ALL_WORDS_NUM[num]
+    else:
+        return []
