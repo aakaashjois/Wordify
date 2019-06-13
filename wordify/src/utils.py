@@ -4,6 +4,14 @@ import phonenumbers
 from phonenumbers import NumberParseException
 
 
+def parse_number(number):
+    number = number.replace('-', '')
+    number = number.replace('(', '')
+    number = number.replace(')', '')
+    number = number.replace(' ', '')
+    return number
+
+
 def validate_number(number):
     def perform_validation(number):
         try:
