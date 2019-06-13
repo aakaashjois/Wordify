@@ -6,7 +6,13 @@ import sys
 import phonenumbers
 
 
-def all_wordifications(number):
+def all_wordifications(number: str) -> None:
+    """
+    Prints all possible combinations of numbers and english words for the given
+    phone number
+    :param number: (str) phone number
+    :return: None
+    """
     if any(n.isalpha() for n in number):
         sys.exit('Number already contains words.')
     chunks = make_chunks(number)
@@ -15,7 +21,13 @@ def all_wordifications(number):
     print(', '.join(combinations))
 
 
-def number_to_words(number):
+def number_to_words(number: str) -> None:
+    """
+    Prints a transformed version of the phone number which contains part of or
+    complete number transformed into an english word
+    :param number: (str) phone number
+    :return: None
+    """
     chunks = make_chunks(number)
     largest_chunk, index = chunks[-1]
     combinations = []
@@ -26,7 +38,12 @@ def number_to_words(number):
                                                         choice(combinations)))
 
 
-def words_to_number(number):
+def words_to_number(number: str) -> None:
+    """
+    Converts a number which contains english words or letters to digits
+    :param number: (str) phone number
+    :return: None
+    """
     converted = phonenumbers.convert_alpha_characters_in_number(number)
     print('The number {} can be dewordified to {}'.format(number, converted))
 
