@@ -2,7 +2,6 @@ import ast
 import phonenumbers
 from phonenumbers import NumberParseException
 
-
 with open('../utils/words.txt', 'r') as words:
     ALL_WORDS_NUM = ast.literal_eval(words.read())
 
@@ -28,20 +27,13 @@ def validate_number(num):
         return False
 
 
-def parse_number(num):
+def make_chunks(number):
     chunks = []
-    i = 0
-    total = len(num)
-    temp = ''
-    while i < total:
-        if num[i] == '0' or num[i] == '1':
-            chunks += [temp] if temp != '' else []
-            chunks += [num[i]]
-            temp = ''
-        else:
-            temp += num[i]
-        i += 1
-    chunks += [temp] if temp != '' else []
+    for chunk_size in range(1, len(number) + 1):
+        for index in range(len(number) - chunk_size + 1):
+            chunk = number[index: index + chunk_size]
+            if chunk in ALL_WORDS_NUM.keys():
+                chunks.append([chunk, index])
     return chunks
 
 
