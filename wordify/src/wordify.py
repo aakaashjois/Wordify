@@ -1,23 +1,10 @@
+import ast
 import phonenumbers
 from phonenumbers import NumberParseException
-from nltk.corpus import words
 
 
-def map_all_words_to_numbers():
-    words_list = words.words()
-    words_list = set(list(filter(lambda x: len(x) <= 10, words_list)))
-    nums = list(map(words_to_number, words_list))
-    word_num_map = dict()
-    for w, n in zip(words_list, nums):
-        w = w.upper()
-        if n in word_num_map.keys():
-            word_num_map[n].append(w)
-        else:
-            word_num_map[n] = [w]
-    return word_num_map
-
-
-ALL_WORDS_NUM = map_all_words_to_numbers()
+with open('../utils/words.txt', 'r') as words:
+    ALL_WORDS_NUM = ast.literal_eval(words.read())
 
 
 def perform_validation(num):
