@@ -1,44 +1,49 @@
-import string
-import itertools
+from utils import validate_number, parse_number
+from utils import make_chunks, get_all_combinations
+from constants import ALL_WORDS_NUM
+from random import choice
+import sys
+import phonenumbers
 
 
-class Wordify:
+def all_wordifications(number):
+    if any(n.isalpha() for n in number):
+        sys.exit('Number already contains words.')
+    chunks = make_chunks(number)
+    combinations = get_all_combinations(number, chunks)
+    print('All combinations of words and number for {}:'.format(number))
+    print(', '.join(combinations))
 
-    def __init__(self, number: str) -> None:
-        self.has_country_code = False
-        self.combinations = ['', '', 'abc', 'def', 'ghi', 'jkl', 'mno',
-                             'pqrs', 'tuv', 'wxyz']
-        self.number = number
-        self.all_perms = list()
 
-    def preprocess_number(self) -> str:
-        number = self.number.translate(str.maketrans('', '',
-                                                     string.punctuation))
-        if number[0] == '1' and len(number) == 11:
-            self.has_country_code = True
-            number = number[1:]
-        if len(number) < 10 or len(number) > 11:
-            raise ValueError(
-                '{} is not a valid US phone number.'.format(number))
-        return number
+def number_to_words(number):
+    chunks = make_chunks(number)
+    largest_chunk, index = chunks[-1]
+    combinations = []
+    for word in ALL_WORDS_NUM[largest_chunk]:
+        combination = number[0: index] + word + number[index + len(word):]
+        combinations.append(combination)
+    print('The number {} can be wordified to {}'.format(number,
+                                                        choice(combinations)))
 
-    def get_all_words(self):
-        num_list = self.parse_number()
-        comb = [self.combinations[num] for num in num_list]
-        temp = [comb[0]]
-        for i in range(1, len(comb)):
-            temp.append(comb[i])
-            self.all_perms = self.all_perms + list(map(lambda x: ''.join(x),
-                                                       itertools.product(
-                                                           *temp)))
 
-    def parse_number(self):
-        return list(map(int, self.number))
+def words_to_number(number):
+    converted = phonenumbers.convert_alpha_characters_in_number(number)
+    print('The number {} can be dewordified to {}'.format(number, converted))
 
 
 if __name__ == '__main__':
-    ph_num = '18007246837'
-    wordify = Wordify(ph_num)
-    wordify.preprocess_number()
-    wordify.get_all_words()
-    print(wordify.all_perms)
+    phone_number = input('Enter the phone number\n')
+    phone_number = parse_number(phone_number)
+    if not validate_number(phone_number):
+        sys.exit('Invalid US phone number.')
+    functions = {'1': number_to_words,
+                 '2': words_to_number,
+                 '3': all_wordifications}
+    function = input('''What would you like to perform?
+    1. Number to words
+    2. Words to number
+    3. All wordifications\n''')
+    try:
+        functions[function](phone_number)
+    except KeyError:
+        sys.exit('Invalid option selected.')
