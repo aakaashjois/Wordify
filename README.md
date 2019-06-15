@@ -10,5 +10,5 @@ Create combinations of words and numbers for any US Phone number.
 ## Author
 This project is created by [Aakaash Jois](https://aakaashjois.com).
 
-## TODO
-1. Add a license
+## License
+This project is released under [GNU General Public License v3.0](./LICENSE.md).
