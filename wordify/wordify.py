@@ -1,6 +1,6 @@
-from utils import validate_number, parse_number
-from utils import make_chunks, get_all_combinations
-from constants import ALL_WORDS_NUM
+from .utils import validate_number, parse_number
+from .utils import make_chunks, get_all_combinations
+from .constants import ALL_WORDS_NUM
 from random import choice
 import sys
 import phonenumbers
@@ -48,7 +48,7 @@ def words_to_number(number: str) -> None:
     print('The number {} can be dewordified to {}'.format(number, converted))
 
 
-if __name__ == '__main__':
+def main():
     phone_number = input('Enter the phone number\n')
     phone_number = parse_number(phone_number)
     if not validate_number(phone_number):
@@ -64,3 +64,7 @@ if __name__ == '__main__':
         functions[function](phone_number)
     except KeyError:
         sys.exit('Invalid option selected.')
+
+
+if __name__ == '__main__':
+    main()

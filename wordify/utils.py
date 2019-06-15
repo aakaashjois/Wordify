@@ -1,4 +1,4 @@
-from constants import ALL_WORDS_NUM
+from .constants import ALL_WORDS_NUM
 
 import phonenumbers
 from phonenumbers import NumberParseException
@@ -111,7 +111,7 @@ def get_all_combinations(number: str, chunks: list) -> list:
             if index_not_used(index, len(chunk), used_indices):
                 for word in ALL_WORDS_NUM[chunk]:
                     combination = number[0: index] + word + number[
-                                                            index + len(word):]
+                        index + len(word):]
 
                     if combination not in combinations:
                         combinations.append(combination)
