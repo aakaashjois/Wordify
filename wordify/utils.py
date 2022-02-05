@@ -86,8 +86,7 @@ def get_all_combinations(number: str, chunks: list) -> list:
         for i in range(index, index + length):
             if i in used_indices:
                 return False
-        for i in range(index, index + length):
-            used_indices.append(i)
+        used_indices.extend(iter(range(index, index + length)))
         return True
 
     def number_to_word_combination(chunks: list,
@@ -104,14 +103,14 @@ def get_all_combinations(number: str, chunks: list) -> list:
         :return: None
         """
         temp_used_indices = used_indices.copy()
-        for i in range(0, len(chunks)):
+        for i in range(len(chunks)):
             used_indices = temp_used_indices.copy()
             chunk, index = chunks[i]
 
             if index_not_used(index, len(chunk), used_indices):
                 for word in ALL_WORDS_NUM[chunk]:
-                    combination = number[0: index] + word + number[
-                        index + len(word):]
+                    combination = (number[:index] + word + number[
+                        index + len(word):])
 
                     if combination not in combinations:
                         combinations.append(combination)

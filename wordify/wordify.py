@@ -32,7 +32,7 @@ def number_to_words(number: str) -> None:
     largest_chunk, index = chunks[-1]
     combinations = []
     for word in ALL_WORDS_NUM[largest_chunk]:
-        combination = number[0: index] + word + number[index + len(word):]
+        combination = number[:index] + word + number[index + len(word):]
         combinations.append(combination)
     print('The number {} can be wordified to {}'.format(number,
                                                         choice(combinations)))
